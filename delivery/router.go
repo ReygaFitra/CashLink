@@ -7,10 +7,14 @@ import (
 
 func RunServer() {
 	r := gin.Default()
+
+	// User Authentication
 	r.POST("/signup", controllers.SignUp)
 	r.POST("/login", controllers.Login)
 	r.POST("/logout",  controllers.Logout)
-	r.GET("/validate", controllers.AuthMiddleware, controllers.Validate)
+	// Find User by Name
+	r.GET("/user", controllers.AuthMiddleware, controllers.Validate)
+	r.GET("/user/search/:username", controllers.AuthMiddleware, controllers.FindUserByName)
 	
 	r.Run()
 }

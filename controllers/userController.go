@@ -15,6 +15,7 @@ import (
 func SignUp(c *gin.Context) {
 	var body struct{
 		Name string
+		Username string
 		Email string
 		Password string
 	}
@@ -34,7 +35,7 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
-	user := models.User{Name: body.Name, Email:body.Email, Password: string(hash)}
+	user := models.User{Name: body.Name, Username:body.Username, Email:body.Email, Password: string(hash)}
 	result := config.DB.Create(&user)
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -110,5 +111,25 @@ func Validate(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"user": user,
+	})
+}
+
+func FindUserByName(c *gin.Context) {
+	username:= c.Param("username")
+
+	var user models.User
+	config.DB.First(&user, "username = ?", username)
+	if user.ID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "User Not Found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"Id": user.ID,
+		"Name": user.Name,
+		"Username": user.Username,
+		"Email": user.Email,
 	})
 }
