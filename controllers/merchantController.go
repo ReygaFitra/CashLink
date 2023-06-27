@@ -153,3 +153,58 @@ func AddProduct(c *gin.Context) {
 		"message": "Add New Product Successfully",
 	})
 }
+
+func UpdateProduct(c *gin.Context) {
+	var body struct {
+		Product_ID     int64
+		Product_Name   string
+		Product_Price  float64
+	}
+
+	if c.Bind(&body) != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to read body",
+		})
+		return
+	}
+
+	merchant, exists := c.Get("merchant")
+	if !exists {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to get merchant information",
+		})
+		return
+	}
+
+	merchantID, ok := merchant.(models.Merchant)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Invalid merchant ID",
+		})
+		return
+	}
+
+	var product models.Product
+	result := config.DB.First(&product, "product_id = ? AND merchant_id = ?", body.Product_ID, merchantID.Merchant_ID)
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Product not found or you don't have permission to update it",
+		})
+		return
+	}
+
+	product.Product_Name = body.Product_Name
+	product.Product_Price = body.Product_Price
+
+	result = config.DB.Save(&product)
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to update product",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Product updated successfully",
+	})
+}
