@@ -18,6 +18,7 @@ func RunServer() {
 
 	// Merchant Authentication
 	r.POST("/signup/merchant", controllers.RegisterMerchant)
+	r.POST("/login/merchant", controllers.LoginMerchant)
 	
 	r.Run()
 }
