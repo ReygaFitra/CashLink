@@ -208,3 +208,34 @@ func UpdateProduct(c *gin.Context) {
 		"message": "Product updated successfully",
 	})
 }
+
+func ViewProducts(c *gin.Context) {
+	merchant, exists := c.Get("merchant")
+	if !exists {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to get merchant information",
+		})
+		return
+	}
+
+	merchantID, ok := merchant.(models.Merchant)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Invalid merchant ID",
+		})
+		return
+	}
+
+	var products []models.Product
+	result := config.DB.Where("merchant_id = ?", merchantID.Merchant_ID).Find(&products)
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to view products",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"products": products,
+	})
+}

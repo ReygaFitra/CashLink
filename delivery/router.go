@@ -22,8 +22,10 @@ func RunServer() {
 	r.POST("/merchant/logout",  controllers.Logout)
 
 	r.GET("/merchant", controllers.MerchantMiddleware, controllers.MerchantValidate)
+	// Merchant Products
 	r.POST("/merchant/product", controllers.MerchantMiddleware, controllers.AddProduct)
 	r.PUT("/merchant/product", controllers.MerchantMiddleware, controllers.UpdateProduct)
+	r.GET("/merchant/product", controllers.MerchantMiddleware, controllers.ViewProducts)
 	
 	r.Run()
 }
