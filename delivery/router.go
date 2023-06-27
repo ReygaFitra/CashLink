@@ -11,7 +11,7 @@ func RunServer() {
 	// User Authentication
 	r.POST("/signup/user", controllers.SignUp)
 	r.POST("/login/user", controllers.Login)
-	r.POST("/logout",  controllers.Logout)
+	r.POST("/user/logout",  controllers.Logout)
 	// Find User by Name
 	r.GET("/user", controllers.AuthMiddleware, controllers.Validate)
 	r.GET("/user/search/:username", controllers.AuthMiddleware, controllers.FindUserByName)
@@ -19,6 +19,7 @@ func RunServer() {
 	// Merchant Authentication
 	r.POST("/signup/merchant", controllers.RegisterMerchant)
 	r.POST("/login/merchant", controllers.LoginMerchant)
+	r.POST("/merchant/logout",  controllers.Logout)
 	
 	r.Run()
 }
