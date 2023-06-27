@@ -54,6 +54,7 @@ func LoginMerchant(c *gin.Context) {
 		Merchant_Email    string
 		Merchant_Password string
 	} 
+
 	if c.Bind(&body) != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Failed to read body",
@@ -94,5 +95,61 @@ func LoginMerchant(c *gin.Context) {
 	c.SetCookie("Authorization", tokenString, 3600*24*30, "", "", false, true)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Login Success",
+	})
+}
+
+func MerchantValidate(c *gin.Context) {
+	merchant, _ := c.Get("merchant")
+
+	c.JSON(http.StatusOK, gin.H{
+		"merchant": merchant,
+	})
+}
+
+func AddProduct(c *gin.Context) {
+	var body struct {
+		Product_Name  string
+		Product_Price float64
+	}
+
+	if c.Bind(&body) != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to read body",
+		})
+		return
+	}
+
+	merchant, exists := c.Get("merchant")
+	if !exists {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to get merchant information",
+		})
+		return
+	}
+
+	merchantID, ok := merchant.(models.Merchant)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Invalid merchant ID",
+		})
+		return
+	}
+
+	product := models.Product{
+		Product_Name:  body.Product_Name,
+		Product_Price: body.Product_Price,
+		MerchantID:    merchantID.Merchant_ID,
+	}
+
+	result := config.DB.Create(&product)
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to Create Product",
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Add New Product Successfully",
 	})
 }
