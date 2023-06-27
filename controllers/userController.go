@@ -97,6 +97,14 @@ func Login(c *gin.Context) {
 	})
 }
 
+func Logout(c *gin.Context) {
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie("Authorization", "", -1, "", "", false, true)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Logout Success",
+	})
+}
+
 func Validate(c *gin.Context) {
 	user, _ := c.Get("user")
 
