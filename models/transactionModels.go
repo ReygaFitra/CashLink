@@ -3,14 +3,12 @@ package models
 import "time"
 
 type Transfer struct {
-	Transfer_ID          int64     `gorm:"primaryKey;autoIncrement" json:"tf_id"`
-	Transfer_Amount      float64   `gorm:"not null" json:"tf_amount"`
-	Transfer_SenderID    int64     `gorm:"not null" json:"tf_sender_id"`
-	Transfer_RecipientID int64     `gorm:"not null" json:"tf_recipient_id"`
-	Transfer_Description string    `gorm:"not null" json:"tf_description"`
-	CreatedAt   time.Time `gorm:"not null" json:"timestamp"`
-	Sender   User `gorm:"foreignKey:Transfer_SenderID"`
-	Recipient   User `gorm:"foreignKey:Transfer_RecipientID"`
+	ID         uint       `gorm:"primaryKey"`
+	SenderID   uint       `gorm:"not null" json:"sender_id"`
+	ReceiverID uint       `gorm:"not null" json:"receiver_id"`
+	Amount     float64    `gorm:"not null" json:"amount"`
+	Sender     User       `gorm:"foreignKey:SenderID"`
+	Receiver   User       `gorm:"foreignKey:ReceiverID"`
 }
 
 type TransferLog struct {

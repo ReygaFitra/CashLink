@@ -6,8 +6,6 @@ type User struct {
 	Username  string     `gorm:"unique;not null" json:"username"`
 	Email     string     `gorm:"unique" json:"email"`
 	Password  string     `gorm:"not null" json:"password"`
-	Amount    int64      `json:"amount"`
-	Transfers []Transfer `gorm:"foreignKey:Transfer_SenderID"`
-	Receivers []Transfer `gorm:"foreignKey:Transfer_RecipientID"`
-	Payments  []Payment  `gorm:"foreignKey:Payment_UserID"`
+	Balance   int64      `gorm:"default:0" json:"balance"`
+	Transfers []Transfer `gorm:"foreignKey:SenderID"`
 }
