@@ -22,12 +22,11 @@ type TransferLog struct {
 }
 
 type Payment struct {
-	Payment_ID            int64     `gorm:"primaryKey;autoIncrement" json:"pay_id"`
-	Payment_UserID        int64     `gorm:"not null" json:"pay_user_id"`
-	Payment_MerchantID    int64     `gorm:"not null" json:"pay_merchant_id"`
-	Payment_ProductID     int64     `gorm:"not null" json:"pay_product_id"`
-	Payment_Amount        float64   `gorm:"not null" json:"pay_amount"`
-	CreatedAt     time.Time `gorm:"not null" json:"timestamp"`
+	Payment_ID            uint     `gorm:"primaryKey;autoIncrement"`
+	Payment_UserID        uint     `gorm:"not null" json:"payment_userid"`
+	Payment_MerchantID    uint     `gorm:"not null" json:"payment_merchantid"`
+	Payment_ProductID     uint     `gorm:"not null" json:"payment_productid"`
+	Payment_Amount        float64   `gorm:"not null"`
 	User               User      `gorm:"foreignKey:Payment_UserID"`
 	Merchant           Merchant  `gorm:"foreignKey:Payment_MerchantID"`
 	Product            Product   `gorm:"foreignKey:Payment_ProductID"`

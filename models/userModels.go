@@ -8,4 +8,5 @@ type User struct {
 	Password  string     `gorm:"not null" json:"password"`
 	Balance   int64      `gorm:"default:0" json:"balance"`
 	Transfers []Transfer `gorm:"foreignKey:SenderID"`
+	Payments  []Payment  `gorm:"foreignKey:Payment_UserID"`
 }
