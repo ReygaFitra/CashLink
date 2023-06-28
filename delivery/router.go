@@ -12,8 +12,7 @@ func RunServer() {
 	r.POST("/signup/user", controllers.SignUp)
 	r.POST("/login/user", controllers.Login)
 	r.POST("/user/logout",  controllers.Logout)
-	// Find User by Name
-	r.GET("/user", controllers.AuthMiddleware, controllers.Validate)
+	r.GET("/user", controllers.AuthMiddleware, controllers.ViewUser)
 	r.PUT("/user/:id", controllers.AuthMiddleware, controllers.UpdateUser)
 	r.GET("/user/search/:username", controllers.AuthMiddleware, controllers.FindUserByName)
 
@@ -21,8 +20,7 @@ func RunServer() {
 	r.POST("/signup/merchant", controllers.RegisterMerchant)
 	r.POST("/login/merchant", controllers.LoginMerchant)
 	r.POST("/merchant/logout",  controllers.Logout)
-
-	r.GET("/merchant", controllers.MerchantMiddleware, controllers.MerchantValidate)
+	r.GET("/merchant", controllers.MerchantMiddleware, controllers.ViewMerchant)
 	// Merchant Products
 	r.POST("/merchant/product", controllers.MerchantMiddleware, controllers.AddProduct)
 	r.PUT("/merchant/product", controllers.MerchantMiddleware, controllers.UpdateProduct)

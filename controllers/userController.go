@@ -106,7 +106,7 @@ func Logout(c *gin.Context) {
 	})
 }
 
-func Validate(c *gin.Context) {
+func ViewUser(c *gin.Context) {
 	user, _ := c.Get("user")
 
 	c.JSON(http.StatusOK, gin.H{

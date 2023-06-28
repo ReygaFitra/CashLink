@@ -98,7 +98,7 @@ func LoginMerchant(c *gin.Context) {
 	})
 }
 
-func MerchantValidate(c *gin.Context) {
+func ViewMerchant(c *gin.Context) {
 	merchant, _ := c.Get("merchant")
 
 	c.JSON(http.StatusOK, gin.H{
