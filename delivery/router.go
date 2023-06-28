@@ -28,6 +28,7 @@ func RunServer() {
 
 	// Transaction
 	r.POST("user/transaction/transfer/:senderID/:recipientID", controllers.AuthMiddleware, controllers.Transfer)
+	r.POST("user/transaction/payment/:userID/:merchantID/:productID", controllers.AuthMiddleware, controllers.Payment)
 	
 	r.Run()
 }
