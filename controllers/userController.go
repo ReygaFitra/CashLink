@@ -133,3 +133,53 @@ func FindUserByName(c *gin.Context) {
 		"Email": user.Email,
 	})
 }
+
+func UpdateUser(c *gin.Context) {
+	var body struct{
+		Name string
+		Username string
+		Email string
+		Password string
+	}
+
+	if c.Bind(&body) != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to read body",
+		})
+		return
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(body.Password), 10)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to hash password",
+		})
+		return
+	}
+
+	user := models.User{Name: body.Name, Username:body.Username, Email:body.Email, Password: string(hash)}
+	result := config.DB.First(&user, "id = ?", c.Param("id"))
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "User not found or you don't have permission to update it",
+		})
+		return
+	}
+
+	user.Name = body.Name
+	user.Username = body.Username
+	user.Email = body.Email
+	user.Password = body.Password
+
+	result = config.DB.Save(&user)
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to update User",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User update successfully",
+	})
+}

@@ -14,6 +14,7 @@ func RunServer() {
 	r.POST("/user/logout",  controllers.Logout)
 	// Find User by Name
 	r.GET("/user", controllers.AuthMiddleware, controllers.Validate)
+	r.PUT("/user/:id", controllers.AuthMiddleware, controllers.UpdateUser)
 	r.GET("/user/search/:username", controllers.AuthMiddleware, controllers.FindUserByName)
 
 	// Merchant Authentication
