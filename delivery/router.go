@@ -25,6 +25,9 @@ func RunServer() {
 	r.POST("/merchant/product", controllers.MerchantMiddleware, controllers.AddProduct)
 	r.PUT("/merchant/product", controllers.MerchantMiddleware, controllers.UpdateProduct)
 	r.GET("/merchant/product", controllers.MerchantMiddleware, controllers.ViewProducts)
+
+	// Transaction
+	r.POST("user/transaction/transfer/:senderID/:recipientID", controllers.AuthMiddleware, controllers.Transfer)
 	
 	r.Run()
 }
