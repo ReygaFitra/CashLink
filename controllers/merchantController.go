@@ -220,7 +220,7 @@ func UpdateProduct(c *gin.Context) {
 }
 
 func ViewProducts(c *gin.Context) {
-	merchant, exists := c.Get("merchantID")
+	merchant, exists := c.Get("merchant")
 	if !exists {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Failed to get merchant information",
