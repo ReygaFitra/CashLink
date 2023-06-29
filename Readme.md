@@ -6,7 +6,9 @@ E-Wallet Restfull API using GO, GORM, PostgreSQL, and GIN.
 
 ## Description
 
-a
+This project is an e-wallet application that includes authentication features for two entities: users and merchants. Users and merchants can register an account, login, and update their profiles. Merchants can also create products that can be purchased by registered customers or users.
+
+The transaction features in this application include top-up, payment, and balance transfer between users. Users need to log in to access these features. The application uses JWT authentication, ensuring the security of each user's account.
 
 ---
 
@@ -17,7 +19,8 @@ a
    2. Merchant Account
 2. Transfer
 3. Payment
-4. Transaction History
+4. Topup
+5. Transaction History
 
 ---
 
@@ -114,7 +117,12 @@ a
      - Payment
        ```
        METHOD: POST
-       ser/transaction/payment/:userID/:merchantID/:productID
+       user/transaction/payment/:userID/:merchantID/:productID
+       ```
+     - Topup
+       ```
+       METHOD: POST
+       user/transaction/topup/:userID
        ```
      - History Transaction
        ```
