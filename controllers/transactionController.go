@@ -252,3 +252,47 @@ func HistoryTransaction(c *gin.Context) {
 	})
 }
 
+func Topup(c *gin.Context) {
+	userIDStr := c.Param("userID")
+	userID, err := strconv.ParseUint(userIDStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid user ID",
+		})
+		return
+	}
+
+	var body struct {
+		Amount float64
+	}
+
+	if c.BindJSON(&body) != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to read request body",
+		})
+		return
+	}
+
+	user := models.User{Balance: int64(body.Amount)}
+	result := config.DB.First(&user, "id = ?", userID)
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "User not found or you don't have permission to update it",
+		})
+		return
+	}
+
+	user.Balance += int64(body.Amount)
+
+	if err := config.DB.Save(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed topup",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Topup successful",
+	})
+}
+
