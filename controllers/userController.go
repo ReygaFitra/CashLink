@@ -178,7 +178,7 @@ func UpdateUser(c *gin.Context) {
 	user.Name = body.Name
 	user.Username = body.Username
 	user.Email = body.Email
-	user.Password = body.Password
+	user.Password = string(hash)
 
 	result = config.DB.Save(&user)
 	if result.Error != nil {
