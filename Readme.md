@@ -34,6 +34,7 @@ a
 ## API Endpoint
 
 1. Account Management:
+
    - User :
      - Signup
        ```
@@ -102,9 +103,9 @@ a
        /merchant/product/:merchantID
        ```
    - Transaction :
-     ```
-     Require User Login
-     ```
+
+     **Require User Login**
+
      - Transfer
        ```
        METHOD: POST
