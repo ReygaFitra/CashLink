@@ -195,3 +195,60 @@ func Payment(c *gin.Context) {
 		"message": "Payment successful",
 	})
 }
+
+func HistoryTransaction(c *gin.Context) {
+	userIDStr := c.Param("userID")
+	userID, err := strconv.ParseUint(userIDStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid user ID",
+		})
+		return
+	}
+
+	var user models.User
+	if err := config.DB.Preload("Transfers").Preload("Payments.User").Preload("Payments.Merchant").Preload("Payments.Product").First(&user, userID).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to find user",
+		})
+		return
+	}
+
+	if len(user.Transfers) == 0 && len(user.Payments) == 0 {
+		c.JSON(http.StatusOK, gin.H{
+			"Transfer_History": []gin.H{},
+			"Payment_History":  []gin.H{},
+		})
+		return
+	}
+
+	var transferHistory []gin.H
+	for _, transfer := range user.Transfers {
+		transferHistory = append(transferHistory, gin.H{
+			"Transfer_ID":     transfer.ID,
+			"Sender_ID":       transfer.SenderID,
+			"Recipient_ID":    transfer.ReceiverID,
+			"Amount":          transfer.Amount,
+		})
+	}
+
+	var paymentHistory []gin.H
+	for _, payment := range user.Payments {
+		paymentHistory = append(paymentHistory, gin.H{
+			"Payment_ID":         payment.Payment_ID,
+			"User_ID":            payment.Payment_UserID,
+			"Merchant_ID":        payment.Payment_MerchantID,
+			"Product_ID":         payment.Payment_ProductID,
+			"Payment_Amount":     payment.Payment_Amount,
+			"User_Name":          payment.User.Name,
+			"Merchant_Name":      payment.Merchant.Merchant_Name,
+			"Product_Name":       payment.Product.Product_Name,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"Transfer_History": transferHistory,
+		"Payment_History":  paymentHistory,
+	})
+}
+
