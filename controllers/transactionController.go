@@ -10,7 +10,7 @@ import (
 )
 
 func Transfer(c *gin.Context) {
-	senderIDStr := c.Param("senderID")
+	senderIDStr := c.Param("userID")
 	senderID, err := strconv.ParseUint(senderIDStr, 10, 64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -208,8 +208,8 @@ func HistoryTransaction(c *gin.Context) {
 
 	var user models.User
 	if err := config.DB.Preload("Transfers").Preload("Payments.User").Preload("Payments.Merchant").Preload("Payments.Product").First(&user, userID).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to find user",
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "User not found",
 		})
 		return
 	}

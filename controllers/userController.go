@@ -107,7 +107,16 @@ func Logout(c *gin.Context) {
 }
 
 func ViewUser(c *gin.Context) {
-	user, _ := c.Get("user")
+	authenticatedUserID, _ := c.Get("authenticatedUserID")
+	userID := authenticatedUserID.(uint)
+
+	var user models.User
+	if err := config.DB.First(&user, userID).Error; err != nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+			"error": "User not found",
+		})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"user": user,
@@ -158,7 +167,7 @@ func UpdateUser(c *gin.Context) {
 	}
 
 	user := models.User{Name: body.Name, Username:body.Username, Email:body.Email, Password: string(hash)}
-	result := config.DB.First(&user, "id = ?", c.Param("id"))
+	result := config.DB.First(&user, "id = ?", c.Param("userID"))
 	if result.Error != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "User not found or you don't have permission to update it",

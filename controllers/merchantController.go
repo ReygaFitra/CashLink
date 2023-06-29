@@ -99,11 +99,21 @@ func LoginMerchant(c *gin.Context) {
 }
 
 func ViewMerchant(c *gin.Context) {
-	merchant, _ := c.Get("merchant")
 
-	c.JSON(http.StatusOK, gin.H{
-		"merchant": merchant,
+authenticatedMerchantID, _ := c.Get("authenticatedMerchantID")
+merchantID := authenticatedMerchantID.(uint)
+
+var merchant models.Merchant
+if err := config.DB.First(&merchant, merchantID).Error; err != nil {
+	c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+		"error": "Merchant not found",
 	})
+	return
+}
+
+c.JSON(http.StatusOK, gin.H{
+	"merchant": merchant,
+})
 }
 
 func AddProduct(c *gin.Context) {
@@ -210,7 +220,7 @@ func UpdateProduct(c *gin.Context) {
 }
 
 func ViewProducts(c *gin.Context) {
-	merchant, exists := c.Get("merchant")
+	merchant, exists := c.Get("merchantID")
 	if !exists {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Failed to get merchant information",
